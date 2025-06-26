@@ -6,9 +6,9 @@
 
 import { LifeStageMatchingService } from './circleMatchingAlgorithm';
 
-// Mock Supabase client
-const mockSupabaseClient = {
-  from: jest.fn(() => ({
+// Create a proper chainable mock for Supabase
+const createMockChain = () => {
+  const mockChain = {
     select: jest.fn().mockReturnThis(),
     eq: jest.fn().mockReturnThis(),
     not: jest.fn().mockReturnThis(),
@@ -19,7 +19,25 @@ const mockSupabaseClient = {
     update: jest.fn().mockReturnThis(),
     upsert: jest.fn().mockReturnThis(),
     is: jest.fn().mockReturnThis(),
-  })),
+    // Add Jest mock methods to the chain
+    mockResolvedValueOnce: jest.fn().mockReturnThis(),
+    mockResolvedValue: jest.fn().mockReturnThis(),
+    mockRejectedValueOnce: jest.fn().mockReturnThis(),
+  };
+  
+  // Make each method return the chain with mock methods
+  Object.keys(mockChain).forEach(key => {
+    if (typeof mockChain[key as keyof typeof mockChain] === 'function' && !key.startsWith('mock')) {
+      (mockChain[key as keyof typeof mockChain] as jest.Mock).mockReturnValue(mockChain);
+    }
+  });
+  
+  return mockChain;
+};
+
+// Mock Supabase client
+const mockSupabaseClient = {
+  from: jest.fn(() => createMockChain()),
   auth: { autoRefreshToken: false, persistSession: false }
 };
 
@@ -181,14 +199,18 @@ describe('Circle Matching Algorithm - Full Test', () => {
     });
 
     test('Finds unmatched users from database', async () => {
+      // Get a fresh mock chain for this test
+      const mockChain = createMockChain();
+      mockSupabaseClient.from.mockReturnValue(mockChain);
+      
       // Mock active members query
-      mockSupabaseClient.from().select().eq().mockResolvedValueOnce({
+      mockChain.mockResolvedValueOnce({
         data: [{ user_id: 'user-1' }],
         error: null
       });
 
       // Mock users query  
-      mockSupabaseClient.from().select().not().not().not().order().order().mockResolvedValueOnce({
+      mockChain.mockResolvedValueOnce({
         data: [
           { id: 'user-2', full_name: 'Bob', postal_code: 'M5V 2K4', life_stage: 'young_professionals' },
           { id: 'user-3', full_name: 'Carol', postal_code: 'V6B 1A1', life_stage: 'families_with_young_children' }
@@ -197,7 +219,7 @@ describe('Circle Matching Algorithm - Full Test', () => {
       });
 
       // Mock spending patterns queries
-      mockSupabaseClient.from().select().eq().order().order().mockResolvedValue({
+      mockChain.mockResolvedValue({
         data: [{ category: 'budget-conscious', frequency_score: 0.8, average_amount: 75, last_updated: new Date() }],
         error: null
       });
@@ -210,7 +232,10 @@ describe('Circle Matching Algorithm - Full Test', () => {
     });
 
     test('Gets spending patterns from database', async () => {
-      mockSupabaseClient.from().select().eq().order().order().mockResolvedValueOnce({
+      const mockChain = createMockChain();
+      mockSupabaseClient.from.mockReturnValue(mockChain);
+      
+      mockChain.mockResolvedValueOnce({
         data: [
           { category: 'budget-conscious', frequency_score: 0.8, average_amount: 75, last_updated: '2024-01-15' },
           { category: 'convenience', frequency_score: 0.6, average_amount: 45, last_updated: '2024-01-15' }
@@ -226,14 +251,17 @@ describe('Circle Matching Algorithm - Full Test', () => {
     });
 
     test('Creates new circle in database', async () => {
+      const mockChain = createMockChain();
+      mockSupabaseClient.from.mockReturnValue(mockChain);
+      
       // Mock circle creation
-      mockSupabaseClient.from().insert().select().single().mockResolvedValueOnce({
+      mockChain.mockResolvedValueOnce({
         data: { id: 'new-circle-id' },
         error: null
       });
 
       // Mock membership insertion
-      mockSupabaseClient.from().insert().mockResolvedValue({
+      mockChain.mockResolvedValue({
         data: null,
         error: null
       });
@@ -249,7 +277,10 @@ describe('Circle Matching Algorithm - Full Test', () => {
     });
 
     test('Gets all circles with members from database', async () => {
-      mockSupabaseClient.from().select().eq().mockResolvedValueOnce({
+      const mockChain = createMockChain();
+      mockSupabaseClient.from.mockReturnValue(mockChain);
+      
+      mockChain.mockResolvedValueOnce({
         data: [
           {
             id: 'circle-1',
@@ -309,7 +340,10 @@ describe('Circle Matching Algorithm - Full Test', () => {
     });
 
     test('Caches coordinates in database', async () => {
-      mockSupabaseClient.from().upsert().mockResolvedValueOnce({
+      const mockChain = createMockChain();
+      mockSupabaseClient.from.mockReturnValue(mockChain);
+      
+      mockChain.mockResolvedValueOnce({
         data: null,
         error: null
       });
@@ -320,7 +354,10 @@ describe('Circle Matching Algorithm - Full Test', () => {
     });
 
     test('Gets cached coordinates from database', async () => {
-      mockSupabaseClient.from().select().eq().not().not().limit().single().mockResolvedValueOnce({
+      const mockChain = createMockChain();
+      mockSupabaseClient.from.mockReturnValue(mockChain);
+      
+      mockChain.mockResolvedValueOnce({
         data: { latitude: 43.6426, longitude: -79.3871 },
         error: null
       });
@@ -350,32 +387,14 @@ describe('Circle Matching Algorithm - Full Test', () => {
     });
 
     test('Runs complete matching algorithm', async () => {
-      // Mock all database operations for full algorithm run
+      const mockChain = createMockChain();
+      mockSupabaseClient.from.mockReturnValue(mockChain);
       
-      // findUnmatchedUsers mocks
-      mockSupabaseClient.from().select().eq()
+      // Mock all database operations for full algorithm run
+      mockChain
         .mockResolvedValueOnce({ data: [], error: null }) // No active members
-        .mockResolvedValueOnce({ data: testUsers, error: null }); // All users unmatched
-
-      // Mock spending patterns
-      mockSupabaseClient.from().select().eq().order().order()
-        .mockResolvedValue({ data: [], error: null });
-
-      // getAllCirclesWithMembers mock
-      mockSupabaseClient.from().select().eq()
-        .mockResolvedValue({ data: [], error: null }); // No existing circles
-
-      // Mock circle creation
-      mockSupabaseClient.from().insert().select().single()
-        .mockResolvedValue({ data: { id: 'new-circle-1' }, error: null });
-
-      // Mock membership insertion
-      mockSupabaseClient.from().insert()
-        .mockResolvedValue({ data: null, error: null });
-
-      // Mock location cache operations
-      mockSupabaseClient.from().select().eq().limit().single()
-        .mockResolvedValue({ data: null, error: { code: 'PGRST116' } }); // Not found
+        .mockResolvedValueOnce({ data: testUsers, error: null }) // All users unmatched
+        .mockResolvedValue({ data: [], error: null }); // Default for other calls
 
       await service.runMatchingAlgorithm();
       
@@ -384,19 +403,23 @@ describe('Circle Matching Algorithm - Full Test', () => {
     });
 
     test('Handles database errors gracefully', async () => {
-      mockSupabaseClient.from().select().eq()
-        .mockResolvedValueOnce({ data: null, error: new Error('Database error') });
+      const mockChain = createMockChain();
+      mockSupabaseClient.from.mockReturnValue(mockChain);
+      
+      mockChain.mockResolvedValueOnce({ data: null, error: new Error('Database error') });
 
       await expect(service.runMatchingAlgorithm()).rejects.toThrow('Database error');
     });
 
     test('Initializes location cache for existing users', async () => {
+      const mockChain = createMockChain();
+      mockSupabaseClient.from.mockReturnValue(mockChain);
+      
       // Mock uncached postal codes query
-      mockSupabaseClient.from().select().not().not().order()
-        .mockResolvedValueOnce({
-          data: [{ postal_code: 'M5V 3N8' }, { postal_code: 'M5V 2K4' }],
-          error: null
-        });
+      mockChain.mockResolvedValueOnce({
+        data: [{ postal_code: 'M5V 3N8' }, { postal_code: 'M5V 2K4' }],
+        error: null
+      });
 
       // Mock successful geocoding
       (global.fetch as any).mockResolvedValue({
@@ -410,8 +433,7 @@ describe('Circle Matching Algorithm - Full Test', () => {
       });
 
       // Mock caching operations
-      mockSupabaseClient.from().upsert().mockResolvedValue({ data: null, error: null });
-      mockSupabaseClient.from().update().eq().is().mockResolvedValue({ data: null, error: null });
+      mockChain.mockResolvedValue({ data: null, error: null });
 
       await service.initializeLocationCache();
       
