@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 
@@ -41,7 +40,7 @@ export const AINotifications = () => {
   const notification = notifications[currentNotification];
 
   return (
-    <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg">
+    <div className="bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between py-3">
           <div className="flex items-center space-x-3">
@@ -50,7 +49,7 @@ export const AINotifications = () => {
             </div>
             <div>
               <p className="text-sm font-medium">{notification.message}</p>
-              <p className="text-xs text-blue-100">{notification.timeLeft}</p>
+              <p className="text-xs text-orange-100">{notification.timeLeft}</p>
             </div>
           </div>
           

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import ShinyText from '../components/ShinyText';
 
 const Index = () => {
@@ -49,12 +50,12 @@ const Index = () => {
               we connect you with neighbors who share your shopping goals so you can save more together.
             </p>
 
-            <a 
-                href="#" 
-                className="bg-gradient-to-r mt-6 from-orange-500 to-orange-600 text-white text-2xl px-12 py-2 rounded-full font-semibold hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:-translate-y-0.5"
+            <Link 
+                to="/home" 
+                className="bg-gradient-to-r mt-6 from-orange-500 to-orange-600 text-white text-2xl px-12 py-2 rounded-full font-semibold hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:-translate-y-0.5 inline-block"
               >
                 let's go!
-              </a>
+              </Link>
           </div>
         </section>
 

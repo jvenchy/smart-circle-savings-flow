@@ -1,6 +1,4 @@
-
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -50,19 +48,19 @@ export const WeekendChallenges = () => {
   };
 
   return (
-    <Card className="border-blue-200 shadow-lg">
-      <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-100 border-b border-blue-200">
-        <CardTitle className="text-xl font-bold text-gray-900">Weekend Challenges</CardTitle>
+    <div>
+      <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl p-4 border border-orange-200/50 mb-4">
+        <h2 className="text-xl font-bold text-gray-900">Weekend Challenges</h2>
         <p className="text-sm text-gray-600">Opt-in team goals with real cash rewards</p>
-      </CardHeader>
+      </div>
       
-      <CardContent className="p-6">
+      <div>
         <div className="space-y-4">
           {challenges.map((challenge) => (
-            <div key={challenge.id} className={`p-4 rounded-lg border-2 transition-all duration-200 ${
+            <div key={challenge.id} className={`p-4 rounded-2xl border-2 transition-all duration-200 ${
               challenge.status === 'active' 
-                ? 'border-green-200 bg-green-50' 
-                : 'border-gray-200 bg-gray-50'
+                ? 'border-green-200 bg-green-50/60 backdrop-blur-sm' 
+                : 'border-gray-200 bg-white/40 backdrop-blur-sm'
             }`}>
               <div className="flex justify-between items-start mb-3">
                 <div>
@@ -110,7 +108,7 @@ export const WeekendChallenges = () => {
                     <Button 
                       size="sm"
                       onClick={() => handleJoinChallenge(challenge.id)}
-                      className="bg-green-600 hover:bg-green-700"
+                      className="bg-orange-500 hover:bg-orange-600 text-white"
                     >
                       Count me in!
                     </Button>
@@ -131,7 +129,7 @@ export const WeekendChallenges = () => {
         </div>
 
         {/* Recent Success */}
-        <div className="mt-6 p-4 bg-gradient-to-r from-green-100 to-green-50 rounded-lg border border-green-200">
+        <div className="mt-6 p-4 bg-gradient-to-r from-green-100 to-green-50 rounded-2xl border border-green-200">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
               <span className="text-white text-sm">✓</span>
@@ -142,7 +140,7 @@ export const WeekendChallenges = () => {
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };

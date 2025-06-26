@@ -1,6 +1,4 @@
-
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const SavingsAnalytics = () => {
   const monthlyData = [
@@ -17,16 +15,16 @@ export const SavingsAnalytics = () => {
   ];
 
   return (
-    <Card className="border-indigo-200 shadow-lg">
-      <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-100 border-b border-indigo-200">
-        <CardTitle className="text-xl font-bold text-gray-900">Your Savings</CardTitle>
+    <div>
+      <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl p-4 border border-orange-200/50 mb-4">
+        <h2 className="text-xl font-bold text-gray-900">Your Savings</h2>
         <p className="text-sm text-gray-600">Track your collective impact</p>
-      </CardHeader>
+      </div>
       
-      <CardContent className="p-6">
+      <div>
         {/* Total Impact */}
         <div className="mb-6">
-          <div className="text-center p-4 bg-gradient-to-r from-green-100 to-emerald-50 rounded-lg border border-green-200">
+          <div className="text-center p-4 bg-gradient-to-r from-green-100 to-emerald-50 rounded-2xl border border-green-200">
             <p className="text-3xl font-bold text-green-600">$372</p>
             <p className="text-sm text-gray-600">Total Saved This Quarter</p>
             <p className="text-xs text-green-700 mt-1">↑ 28% vs last quarter</p>
@@ -43,13 +41,13 @@ export const SavingsAnalytics = () => {
                 <div className="flex-1 mx-3">
                   <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                     <div 
-                      className="h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full transition-all duration-500"
+                      className="h-full bg-gradient-to-r from-orange-400 to-red-500 rounded-full transition-all duration-500"
                       style={{ width: `${(month.savings / 200) * 100}%` }}
                     />
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-sm font-bold text-green-600">${month.savings}</span>
+                  <span className="text-sm font-bold text-orange-600">${month.savings}</span>
                   <span className="text-xs text-gray-500 block">+${month.challenges} rewards</span>
                 </div>
               </div>
@@ -67,7 +65,7 @@ export const SavingsAnalytics = () => {
                 <div className="flex items-center space-x-2">
                   <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
                     <div 
-                      className="h-full bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full"
+                      className="h-full bg-gradient-to-r from-orange-400 to-red-500 rounded-full"
                       style={{ width: `${category.percentage}%` }}
                     />
                   </div>
@@ -79,7 +77,7 @@ export const SavingsAnalytics = () => {
         </div>
 
         {/* Milestone */}
-        <div className="mt-6 p-3 bg-gradient-to-r from-yellow-100 to-orange-50 rounded-lg border border-yellow-200">
+        <div className="mt-6 p-3 bg-gradient-to-r from-yellow-100 to-orange-50 rounded-2xl border border-yellow-200">
           <div className="flex items-center space-x-2">
             <span className="text-yellow-600 text-lg">🏆</span>
             <div>
@@ -88,7 +86,7 @@ export const SavingsAnalytics = () => {
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
