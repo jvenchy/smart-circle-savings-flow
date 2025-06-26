@@ -51,7 +51,7 @@ const Index = () => {
             </p>
 
             <Link 
-                to="/home" 
+                to="/login" 
                 className="bg-gradient-to-r mt-6 from-orange-500 to-orange-600 text-white text-2xl px-12 py-2 rounded-full font-semibold hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:-translate-y-0.5 inline-block"
               >
                 let's go!

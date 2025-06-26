@@ -1,23 +1,33 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCircle } from '../hooks/useCircle';
 import { useDeals } from '../hooks/useDeals';
 import { useChallenges } from '../hooks/useChallenges';
 import { useSavings } from '../hooks/useSavings';
 import { useNotifications } from '../hooks/useNotifications';
+import { useCurrentUser } from '../hooks/useCurrentUser';
+import { supabase } from '../api/supabaseClient';
 import { CircleDashboard } from '@/components/CircleDashboard';
 import { GroupDeals } from '@/components/GroupDeals';
 import { AINotifications } from '@/components/AINotifications';
 
-// Placeholder user id (replace with real auth/user context)
-const userId = 'user-123';
-
-export default function Index() {
+export default function Home() {
+  const { user, loading } = useCurrentUser();
+  const userId = user?.id;
   const { circleId, members } = useCircle(userId);
   const { deals, join: joinDeal } = useDeals(userId, circleId || '');
   const { challenges, join: joinChallenge } = useChallenges(userId, circleId || '');
   const { rewards, participations } = useSavings(userId);
   const { notifications } = useNotifications(userId);
+  const navigate = useNavigate();
+
+  if (loading) return <div>Loading...</div>;
+  if (!userId) return <div>Please log in</div>;
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/login');
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-100">
@@ -42,22 +52,26 @@ export default function Index() {
               </a>
               <div className="flex items-center space-x-3 pl-4 border-l border-gray-300">
                 <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900">User</p>
+                  <p className="text-sm font-medium text-gray-900">{user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || "User"}</p>
                   <p className="text-xs text-orange-600">Circle {circleId || 'N/A'}</p>
                 </div>
-                <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                  <span className="text-orange-600 font-medium">U</span>
+                <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center cursor-pointer" onClick={handleLogout} title="Log out">
+                  <span className="text-orange-600 font-medium">
+                    {user?.user_metadata?.full_name?.[0] || user?.user_metadata?.name?.[0] || user?.email?.[0] || 'U'}
+                  </span>
                 </div>
               </div>
             </nav>
             {/* Mobile user info */}
             <div className="md:hidden flex items-center space-x-3">
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">User</p>
+                <p className="text-sm font-medium text-gray-900">{user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || "User"}</p>
                 <p className="text-xs text-orange-600">Circle {circleId || 'N/A'}</p>
               </div>
-              <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                <span className="text-orange-600 font-medium">U</span>
+              <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center cursor-pointer" onClick={handleLogout} title="Log out">
+                <span className="text-orange-600 font-medium">
+                  {user?.user_metadata?.full_name?.[0] || user?.user_metadata?.name?.[0] || user?.email?.[0] || 'U'}
+                </span>
               </div>
             </div>
           </div>
