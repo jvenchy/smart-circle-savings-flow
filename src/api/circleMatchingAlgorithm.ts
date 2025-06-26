@@ -73,8 +73,10 @@ class LifeStageMatchingService {
 
   constructor() {
     // Create dedicated Supabase client for matching service
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const supabaseServiceKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY; // Use service role for admin operations
+    // Hardcoded for hackathon speed - use your actual values
+    const supabaseUrl = process.env.VITE_SUPABASE_URL || 'https://xboarekcgkggyhornyos.supabase.co';
+    const supabaseServiceKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY || 
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhib2FyZWtjZ2tnZ3lob3JueW9zIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MDk1MTQ4MiwiZXhwIjoyMDY2NTI3NDgyfQ.VwaW-zIb_16JY7MkfhsE45NQYHTKDNlUoRJ20Cg5aGc';
     
     if (!supabaseUrl || !supabaseServiceKey) {
       throw new Error('Missing Supabase credentials for matching service. Add VITE_SUPABASE_URL and VITE_SUPABASE_SERVICE_ROLE_KEY to your environment.');
@@ -412,7 +414,9 @@ class LifeStageMatchingService {
    */
   private async geocodePostalCode(postalCode: string): Promise<{lat: number, lng: number} | null> {
     try {
-      const API_KEY = import.meta.env.VITE_OPENCAGE_API_KEY;
+      // Hardcoded API key for hackathon speed
+      const API_KEY = process.env.VITE_OPENCAGE_API_KEY || '47edb1fff4594fa8993ef85d90280de0';
+        
       if (!API_KEY) {
         console.warn('OpenCage API key not found. Set VITE_OPENCAGE_API_KEY environment variable.');
         return null;
@@ -500,7 +504,8 @@ class LifeStageMatchingService {
    */
   private async getLocationDetails(postalCode: string, coords: {lat: number, lng: number}): Promise<{city: string | null, region: string | null}> {
     try {
-      const API_KEY = import.meta.env.VITE_OPENCAGE_API_KEY;
+      const API_KEY = process.env.VITE_OPENCAGE_API_KEY || '47edb1fff4594fa8993ef85d90280de0';
+        
       if (!API_KEY) return { city: null, region: null };
 
       // Reverse geocode to get detailed location info
@@ -610,15 +615,6 @@ class LifeStageMatchingService {
     });
 
     return members.length > 0 ? totalScore / members.length : 0;
-  }
-
-  /**
-   * Determine shopping frequency from the users table (handled by colleague)
-   */
-  private async determineShoppingFrequency(userId: string): Promise<'daily' | 'weekly' | 'bi-weekly' | 'monthly'> {
-    // Simply return weekly as default since your colleague handles the actual calculation
-    // The shopping_frequency field in users table should already be populated
-    return 'weekly';
   }
 
   /**
@@ -1069,67 +1065,3 @@ class LifeStageMatchingService {
 
 // Usage example and export
 export { LifeStageMatchingService, type UserWithSpendingProfile, type MatchingCriteria };
-
-/**
- * Setup and Usage Instructions:
- * 
- * 1. Add Environment Variables to your .env file:
- *    VITE_SUPABASE_URL=your_supabase_url
- *    VITE_SUPABASE_SERVICE_ROLE_KEY=your_service_role_key  // For admin operations
- *    VITE_OPENCAGE_API_KEY=your_opencage_api_key
- * 
- * 2. Ensure your colleague's shopping frequency calculation is populating 
- *    the users.shopping_frequency field
- * 
- * 3. Usage in your app:
- */
-
-// Example implementation:
-/*
-import { LifeStageMatchingService } from './path/to/circleMatchingAlgorithm';
-
-// Initialize the matching service (creates its own Supabase client)
-const matchingService = new LifeStageMatchingService();
-
-// Pre-populate location cache (run once for existing users)
-export async function initializeUserLocations() {
-  try {
-    await matchingService.initializeLocationCache();
-    console.log('✅ Location cache initialized');
-  } catch (error) {
-    console.error('❌ Error initializing location cache:', error);
-  }
-}
-
-// Run the matching algorithm
-export async function runCircleMatching() {
-  try {
-    await matchingService.runMatchingAlgorithm();
-    console.log('✅ Circle matching completed');
-  } catch (error) {
-    console.error('❌ Error running circle matching:', error);
-  }
-}
-
-// Usage in your React component:
-function AdminPanel() {
-  const handleRunMatching = async () => {
-    await runCircleMatching();
-  };
-
-  const handleInitializeLocations = async () => {
-    await initializeUserLocations();
-  };
-
-  return (
-    <div>
-      <button onClick={handleInitializeLocations}>
-        Initialize Location Cache
-      </button>
-      <button onClick={handleRunMatching}>
-        Run Circle Matching
-      </button>
-    </div>
-  );
-}
-*/
