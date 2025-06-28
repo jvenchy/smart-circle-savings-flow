@@ -4,7 +4,6 @@
 </div>
 
 ![Screenshot 2025-06-28 at 2 04 37 PM](https://github.com/user-attachments/assets/ba3be923-7928-40d1-a8a2-31ddca94bf19)
-![Screenshot 2025-06-28 at 2 04 43 PM](https://github.com/user-attachments/assets/9d38dfbb-7354-44c3-80ff-23018a1de055)
 ![Screenshot 2025-06-28 at 2 04 54 PM](https://github.com/user-attachments/assets/6d33eb0e-f6e4-4171-878f-b496f772c4b9)
 ![Screenshot 2025-06-28 at 2 05 05 PM](https://github.com/user-attachments/assets/a6aaba83-1735-4e69-afce-d15b938d2253)
 ![Screenshot 2025-06-28 at 2 05 20 PM](https://github.com/user-attachments/assets/c59a51f6-6978-483c-b138-82da04ba09cc)
